@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dwi Bread — Toko Roti</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body { background: #fff8f0; color: #3b2000; }
+
+.header {
+  background: linear-gradient(135deg, #7c3f00, #e07b39);
+  color: white;
+  text-align: center;
+  padding: 35px 20px;
+}
+.header h1 { font-size: 2.2rem; letter-spacing: 3px; font-weight: 700; }
+.header p  { font-size: 13px; margin-top: 6px; opacity: .85; letter-spacing: 1px; }
+
+.layout {
+  display: flex;
+  gap: 24px;
+  width: 90%;
+  max-width: 1000px;
+  margin: 30px auto;
+}
+
+/* ── MENU ── */
+.menu-section { flex: 2; }
+.menu-section h2 {
+  font-size: 1.1rem;
+  color: #7c3f00;
+  border-bottom: 2px solid #f0d5b0;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
+}
+
+.menu-item {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 14px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  border: 2px solid transparent;
+}
+.menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.13);
+  border-color: #e07b39;
+}
+.menu-item .emoji { font-size: 2.8rem; margin-bottom: 10px; }
+.menu-item .nama  { font-size: 14px; font-weight: 700; color: #3b2000; margin-bottom: 4px; }
+.menu-item .desc  { font-size: 11px; color: #a07050; margin-bottom: 8px; line-height: 1.5; }
+.menu-item .harga { font-size: 13px; color: #e07b39; font-weight: 700; margin-bottom: 10px; }
+.menu-item .btn-add {
+  background: #7c3f00;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.menu-item .btn-add:hover { background: #5a2d00; }
+
+/* ── ORDER ── */
+.order-section { flex: 1; min-width: 250px; }
+.order-box {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 20px;
+}
+.order-box h2 { font-size: 1.1rem; color: #7c3f00; margin-bottom: 14px; border-bottom: 2px solid #f0d5b0; padding-bottom: 8px; }
+
+.input-nama {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #f0d5b0;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  background: #fff8f0;
+}
+.input-nama:focus { outline: none; border-color: #e07b39; }
+
+#order-list { min-height: 60px; margin-bottom: 12px; }
+.order-empty { text-align: center; color: #c8a070; font-size: 13px; padding: 20px 0; }
+
+.order-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #faebd7;
+  font-size: 13px;
+}
+.order-row .item-info { flex: 1; }
+.order-row .item-nama  { font-weight: 600; color: #3b2000; font-size: 12px; }
+.order-row .item-harga { color: #a07050; font-size: 11px; }
+.qty-wrap { display: flex; align-items: center; gap: 6px; }
+.qty-btn {
+  width: 24px; height: 24px;
+  border: 1px solid #f0d5b0;
+  background: #fff8f0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  color: #7c3f00;
+  font-weight: bold;
+}
+.qty-btn:hover { background: #f0d5b0; }
+.qty-num { font-weight: 700; min-width: 18px; text-align: center; font-size: 13px; }
+
+.divider { border: none; border-top: 1px dashed #f0d5b0; margin: 10px 0; }
+
+.total-row { display: flex; justify-content: space-between; font-size: 13px; margin: 6px 0; color: #7c5030; }
+.total-row.grand { font-weight: 700; font-size: 15px; color: #3b2000; }
+
+.btn-order {
+  width: 100%;
+  padding: 11px;
+  background: linear-gradient(135deg, #7c3f00, #e07b39);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: opacity .2s;
+}
+.btn-order:hover { opacity: .88; }
+.btn-reset-order {
+  width: 100%;
+  padding: 8px;
+  background: none;
+  color: #a07050;
+  border: 1px solid #f0d5b0;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.btn-reset-order:hover { background: #faebd7; }
+
+/* ── STRUK ── */
+.struk-wrap {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.struk-wrap.show { display: flex; }
+.struk {
+  background: white;
+  border-radius: 16px;
+  padding: 28px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+}
+.struk h3 { font-size: 1.3rem; color: #7c3f00; margin-bottom: 2px; }
+.struk .sub { font-size: 12px; color: #a07050; margin-bottom: 14px; }
+.struk-item { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed #f0d5b0; }
+.struk-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; margin-top: 12px; color: #3b2000; }
+.struk-thanks { font-size: 12px; color: #a07050; margin-top: 12px; line-height: 1.6; }
+.btn-tutup {
+  margin-top: 16px;
+  padding: 9px 28px;
+  background: #7c3f00;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.btn-tutup:hover { background: #5a2d00; }
+
+@media(max-width: 680px) {
+  .layout { flex-direction: column; width: 95%; }
+  .order-section { min-width: unset; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍞 DWI BREAD</h1>
+  <p>Roti segar setiap hari, dibuat dengan cinta</p>
+</div>
+
+<div class="layout">
+
+  <!-- MENU -->
+  <div class="menu-section">
+    <h2>🥖 Menu Roti Kami</h2>
+    <div class="menu-grid">
+
+      <div class="menu-item" onclick="tambah('Roti Cokelat', 12000)">
+        <div class="emoji">🍫</div>
+        <div class="nama">Roti Cokelat</div>
+        <div class="desc">Roti lembut isi cokelat leleh yang manis dan menggugah selera</div>
+        <div class="harga">Rp 12.000</div>
+        <button class="btn-add">+ Tambah</button>
+      </div>
+
+      <div class="menu-item" onclick="tambah('Roti Keju', 13000)">
+        <div class="emoji">🧀</div>
+        <div class="nama">Roti Keju</div>
+        <div class="desc">Roti empuk dengan taburan keju mozzarella yang gurih dan melted</div>
+        <div class="harga">Rp 13.000</div>
+        <button class="btn-add">+ Tambah</button>
+      </div>
+
+      <div class="menu-item" onclick="tambah('Roti Pisang', 11000)">
+        <div class="emoji">🍌</div>
+        <div class="nama">Roti Pisang</div>
+        <div class="desc">Roti manis isi pisang cavendish dengan aroma vanila yang harum</div>
+        <div class="harga">Rp 11.000</div>
+        <button class="btn-add">+ Tambah</button>
+      </div>
+
+      <div class="menu-item" onclick="tambah('Roti Srikaya', 12000)">
+        <div class="emoji">🟢</div>
+        <div class="nama">Roti Srikaya</div>
+        <div class="desc">Roti dengan selai srikaya pandan khas yang legit dan wangi</div>
+        <div class="harga">Rp 12.000</div>
+        <button class="btn-add">+ Tambah</button>
+      </div>
+
+      <div class="menu-item" onclick="tambah('Roti Sobek Susu', 15000)">
+        <div class="emoji">🍞</div>
+        <div class="nama">Roti Sobek Susu</div>
+        <div class="desc">Roti sobek lembut dengan isian krim susu yang creamy dan lumer</div>
+        <div class="harga">Rp 15.000</div>
+        <button class="btn-add">+ Tambah</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ORDER -->
+  <div class="order-section">
+    <div class="order-box">
+      <h2>🛒 Pesanan Kamu</h2>
+      <input class="input-nama" type="text" id="namaPelanggan" placeholder="Nama pemesan...">
+      <div id="order-list">
+        <div class="order-empty">Belum ada pesanan.<br>Pilih roti favoritmu! 🍞</div>
+      </div>
+      <hr class="divider">
+      <div class="total-row"><span>Subtotal</span><span id="subtotal">Rp 0</span></div>
+      <div class="total-row"><span>Ongkos Kemas</span><span id="kemas">Rp 0</span></div>
+      <div class="total-row grand"><span>Total</span><span id="total">Rp 0</span></div>
+      <button class="btn-order" onclick="pesan()">Pesan Sekarang 🍞</button>
+      <button class="btn-reset-order" onclick="resetOrder()">Kosongkan Pesanan</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- STRUK -->
+<div class="struk-wrap" id="strukWrap">
+  <div class="struk">
+    <h3>🍞 Dwi Bread</h3>
+    <div class="sub">Terima kasih sudah memesan!</div>
+    <div id="strukIsi"></div>
+    <div class="struk-total">
+      <span>Total Bayar</span>
+      <span id="strukTotal"></span>
+    </div>
+    <div class="struk-thanks">Pesanan atas nama: <b id="strukNama"></b><br>Rotimu sedang dipersiapkan dengan penuh cinta 🙏</div>
+    <button class="btn-tutup" onclick="tutupStruk()">Tutup</button>
+  </div>
+</div>
+
+<script>
+let orders = [];
+
+function tambah(nama, harga) {
+  let idx = orders.findIndex(o => o.nama === nama);
+  if (idx >= 0) orders[idx].qty++;
+  else orders.push({ nama, harga, qty: 1 });
+  renderOrder();
+}
+
+function ubahQty(nama, delta) {
+  let idx = orders.findIndex(o => o.nama === nama);
+  if (idx < 0) return;
+  orders[idx].qty += delta;
+  if (orders[idx].qty <= 0) orders.splice(idx, 1);
+  renderOrder();
+}
+
+function renderOrder() {
+  let list = document.getElementById("order-list");
+  if (orders.length === 0) {
+    list.innerHTML = '<div class="order-empty">Belum ada pesanan.<br>Pilih roti favoritmu! 🍞</div>';
+    document.getElementById("subtotal").textContent = "Rp 0";
+    document.getElementById("kemas").textContent    = "Rp 0";
+    document.getElementById("total").textContent    = "Rp 0";
+    return;
+  }
+
+  let html = "";
+  let subtotal = 0;
+  orders.forEach(o => {
+    subtotal += o.harga * o.qty;
+    html += `<div class="order-row">
+      <div class="item-info">
+        <div class="item-nama">${o.nama} x${o.qty}</div>
+        <div class="item-harga">Rp ${o.harga.toLocaleString("id-ID")} / pcs</div>
+      </div>
+      <div class="qty-wrap">
+        <button class="qty-btn" onclick="ubahQty('${o.nama}', -1)">−</button>
+        <span class="qty-num">${o.qty}</span>
+        <button class="qty-btn" onclick="ubahQty('${o.nama}', 1)">+</button>
+      </div>
+    </div>`;
+  });
+
+  let kemas = 2000;
+  let total  = subtotal + kemas;
+  list.innerHTML = html;
+  document.getElementById("subtotal").textContent = "Rp " + subtotal.toLocaleString("id-ID");
+  document.getElementById("kemas").textContent    = "Rp " + kemas.toLocaleString("id-ID");
+  document.getElementById("total").textContent    = "Rp " + total.toLocaleString("id-ID");
+}
+
+function pesan() {
+  let nama = document.getElementById("namaPelanggan").value.trim();
+  if (!nama)           { alert("Masukkan nama pemesan dulu!"); return; }
+  if (!orders.length)  { alert("Pilih roti terlebih dahulu!"); return; }
+
+  let subtotal = orders.reduce((s, o) => s + o.harga * o.qty, 0);
+  let total    = subtotal + 2000;
+
+  let isi = orders.map(o =>
+    `<div class="struk-item">
+      <span>${o.nama} x${o.qty}</span>
+      <span>Rp ${(o.harga * o.qty).toLocaleString("id-ID")}</span>
+    </div>`
+  ).join("") +
+  `<div class="struk-item">
+    <span>Ongkos Kemas</span>
+    <span>Rp 2.000</span>
+  </div>`;
+
+  document.getElementById("strukIsi").innerHTML       = isi;
+  document.getElementById("strukTotal").textContent   = "Rp " + total.toLocaleString("id-ID");
+  document.getElementById("strukNama").textContent    = nama;
+  document.getElementById("strukWrap").classList.add("show");
+}
+
+function tutupStruk() {
+  document.getElementById("strukWrap").classList.remove("show");
+  resetOrder();
+}
+
+function resetOrder() {
+  orders = [];
+  document.getElementById("namaPelanggan").value = "";
+  renderOrder();
+}
+</script>
+</body>
+</html>

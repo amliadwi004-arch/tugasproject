@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DapurKita — Menu Masak</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fdf8f2;
+      --surface: #ffffff;
+      --border: #ede8e0;
+      --accent: #c8622a;
+      --accent-dim: rgba(200,98,42,0.1);
+      --text: #2a1f14;
+      --text-muted: #8c7b6b;
+      --tag-bg: #f5ede3;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #2a1f14 0%, #5c3317 100%);
+      padding: 48px 24px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '🍳';
+      position: absolute;
+      font-size: 10rem;
+      opacity: 0.06;
+      top: -20px; right: -20px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.6);
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    /* SEARCH */
+    .search-wrap {
+      max-width: 600px;
+      margin: 28px auto 0;
+      padding: 0 16px;
+      position: relative;
+    }
+    .search-wrap input {
+      width: 100%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      padding: 12px 20px 12px 44px;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .search-wrap input::placeholder { color: rgba(255,255,255,0.45); }
+    .search-wrap input:focus { background: rgba(255,255,255,0.2); }
+    .search-wrap .icon {
+      position: absolute;
+      left: 32px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    /* CATEGORY FILTER */
+    .categories {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 20px 20px 4px;
+      max-width: 680px;
+      margin: 0 auto;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 7px 16px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .cat-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .cat-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+    /* GRID */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 0 20px 60px;
+    }
+
+    /* CARD */
+    .recipe-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.3s ease both;
+    }
+    .recipe-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(42,31,20,0.12);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-emoji {
+      background: var(--tag-bg);
+      font-size: 3.2rem;
+      text-align: center;
+      padding: 28px 0;
+    }
+    .card-body { padding: 16px 18px 20px; }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .card-meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--tag-bg);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 3px 9px;
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* EMPTY */
+    .empty {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 0;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(42,31,20,0.6);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border-radius: 22px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.25s;
+      scrollbar-width: thin;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-header {
+      background: linear-gradient(135deg, #2a1f14, #5c3317);
+      padding: 32px 28px 24px;
+      position: relative;
+    }
+    .modal-emoji { font-size: 3.5rem; margin-bottom: 12px; display: block; }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: #fff;
+    }
+    .modal-badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .modal-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.85);
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+    .btn-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .btn-close:hover { background: rgba(255,255,255,0.25); }
+
+    .modal-body { padding: 24px 28px 32px; }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .ingredient-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+    .ingredient-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .ingredient-list li::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .steps-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .steps-list li {
+      display: flex;
+      gap: 14px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .step-num {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.72rem;
+      font-weight: 700;
+      min-width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>DapurKita 🍽️</h1>
+  <p>Resep masakan rumahan yang mudah & lezat</p>
+  <div class="search-wrap">
+    <span class="icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Cari resep atau bahan..."/>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="categories" id="categories"></div>
+
+<!-- GRID -->
+<div class="grid" id="recipe-grid"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <button class="btn-close" id="btn-close">✕</button>
+      <span class="modal-emoji" id="m-emoji"></span>
+      <div class="modal-title" id="m-title"></div>
+      <div class="modal-badges" id="m-badges"></div>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">Bahan-Bahan</div>
+      <ul class="ingredient-list" id="m-ingredients"></ul>
+      <div class="section-title">Cara Masak</div>
+      <ol class="steps-list" id="m-steps"></ol>
+    </div>
+  </div>
+</div>
+
+<script>
+const recipes = [
+  {
+    id: 1, emoji: '🍳', name: 'Nasi Goreng Spesial',
+    category: 'Nasi', waktu: '20 menit', porsi: '2 porsi', level: 'Mudah',
+    desc: 'Nasi goreng gurih dengan telur, ayam, dan bumbu khas rumahan.',
+    bahan: ['2 piring nasi putih dingin', '2 butir telur ayam', '100g daging ayam suwir', '3 siung bawang putih, cincang', '2 siung bawang merah, iris', '2 sdm kecap manis', '1 sdm saus tiram', 'Garam & merica secukupnya', 'Minyak goreng', 'Daun bawang & bawang goreng untuk taburan'],
+    langkah: ['Panaskan minyak, tumis bawang putih dan bawang merah hingga harum.', 'Masukkan telur, orak-arik hingga setengah matang.', 'Tambahkan ayam suwir, aduk rata.', 'Masukkan nasi, aduk hingga tercampur merata dengan isian.', 'Tuang kecap manis dan saus tiram, aduk rata.', 'Tambahkan garam dan merica, koreksi rasa.', 'Sajikan dengan taburan daun bawang dan bawang goreng.']
+  },
+  {
+    id: 2, emoji: '🥘', name: 'Rendang Daging',
+    category: 'Daging', waktu: '2 jam', porsi: '4 porsi', level: 'Sulit',
+    desc: 'Rendang daging sapi empuk dengan bumbu rempah yang kaya dan santan kental.',
+    bahan: ['500g daging sapi', '400ml santan kental', '200ml santan encer', '4 lembar daun jeruk', '2 batang serai, memarkan', '3 lembar daun salam', 'Bumbu halus: 8 cabai merah, 5 bawang merah, 3 bawang putih, 2cm jahe, 2cm kunyit, 2cm lengkuas'],
+    langkah: ['Haluskan semua bumbu halus menggunakan blender.', 'Masak santan encer bersama bumbu halus dan rempah (serai, daun jeruk, salam) hingga mendidih.', 'Masukkan daging sapi, masak dengan api sedang sambil sesekali diaduk.', 'Setelah kuah mulai menyusut, tuang santan kental.', 'Masak terus dengan api kecil sambil terus diaduk agar tidak gosong.', 'Masak hingga kuah benar-benar kering dan daging berwarna cokelat kehitaman.', 'Koreksi rasa, sajikan dengan nasi putih hangat.']
+  },
+  {
+    id: 3, emoji: '🍗', name: 'Ayam Goreng Kremes',
+    category: 'Ayam', waktu: '45 menit', porsi: '4 porsi', level: 'Menengah',
+    desc: 'Ayam goreng renyah dengan taburan kremes gurih yang bikin nagih.',
+    bahan: ['1 ekor ayam, potong 8', '3 siung bawang putih', '2cm jahe', '2cm kunyit', '1 batang serai', '3 lembar daun salam', 'Garam secukupnya', '200ml air', 'Minyak goreng', 'Tepung kremes: 100g tepung beras, garam, air bekas rebusan ayam'],
+    langkah: ['Haluskan bawang putih, jahe, dan kunyit.', 'Rebus ayam dengan bumbu halus, serai, daun salam, garam, dan air hingga empuk (sekitar 20 menit).', 'Angkat ayam, sisihkan air rebusan untuk kremes.', 'Goreng ayam dalam minyak panas hingga kecokelatan dan renyah.', 'Untuk kremes: campur tepung beras dengan air rebusan ayam, aduk hingga encer.', 'Tuang adonan kremes sedikit-sedikit ke dalam minyak panas, goreng hingga renyah.', 'Sajikan ayam dengan taburan kremes di atasnya.']
+  }
+];
+
+const categories = ['Semua', ...new Set(recipes.map(r => r.category))];
+let activeCategory = 'Semua';
+let searchQuery = '';
+
+// Render categories
+const catWrap = document.getElementById('categories');
+categories.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn' + (cat === 'Semua' ? ' active' : '');
+  btn.textContent = cat;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCategory = cat;
+    renderGrid();
+  });
+  catWrap.appendChild(btn);
+});
+
+function renderGrid() {
+  const grid = document.getElementById('recipe-grid');
+  const q = searchQuery.toLowerCase();
+  const filtered = recipes.filter(r => {
+    const matchCat = activeCategory === 'Semua' || r.category === activeCategory;
+    const matchSearch = !q || r.name.toLowerCase().includes(q) || r.bahan.some(b => b.toLowerCase().includes(q));
+    return matchCat && matchSearch;
+  });
+
+  grid.innerHTML = '';
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><p>Resep tidak ditemukan.</p></div>`;
+    return;
+  }
+  filtered.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.innerHTML = `
+      <div class="card-emoji">${r.emoji}</div>
+      <div class="card-body">
+        <div class="card-title">${r.name}</div>
+        <div class="card-meta">
+          <span class="badge">⏱ ${r.waktu}</span>
+          <span class="badge">👥 ${r.porsi}</span>
+          <span class="badge">⭐ ${r.level}</span>
+        </div>
+        <div class="card-desc">${r.desc}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(r));
+    grid.appendChild(card);
+  });
+}
+
+function openModal(r) {
+  document.getElementById('m-emoji').textContent = r.emoji;
+  document.getElementById('m-title').textContent = r.name;
+  document.getElementById('m-badges').innerHTML = `
+    <span class="modal-badge">⏱ ${r.waktu}</span>
+    <span class="modal-badge">👥 ${r.porsi}</span>
+    <span class="modal-badge">⭐ ${r.level}</span>
+    <span class="modal-badge">🏷 ${r.category}</span>
+  `;
+  document.getElementById('m-ingredients').innerHTML = r.bahan.map(b => `<li>${b}</li>`).join('');
+  document.getElementById('m-steps').innerHTML = r.langkah.map((s, i) => `
+    <li><span class="step-num">${i+1}</span><span>${s}</span></li>
+  `).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('btn-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('search-input').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderGrid();
+});
+
+renderGrid();
+</script>
+</body>
+</html>
